@@ -46,7 +46,7 @@ def ledBlink( seconds ):
 def compareOrders( correctOrderList, actualOrder):
 
 	if ( len( actualOrder ) == 0 ):
-		return None;
+		return None
 
 	maxKey = max(actualOrder.keys())
 	actualOrderList=list()
@@ -54,12 +54,12 @@ def compareOrders( correctOrderList, actualOrder):
 		actualOrderList.append( actualOrder[ k ] )
 
 	if ( correctOrderList == actualOrderList and maxKey < len(correctOrderList)):
-		return None;
+		return None
 
 	sortedActualOrderList = sorted(actualOrderList)
 	if ( sorted(correctOrderList) == sortedActualOrderList ):
-		print( 'List are just misordered');
-		return correctOrderList;
+		print( 'List are just misordered')
+		return correctOrderList
 
 	intersection=list()
 	for item in correctOrderList :
@@ -72,7 +72,7 @@ def compareOrders( correctOrderList, actualOrder):
 		return None
 
 	if ( sorted(intersection) == sortedActualOrderList ):
-		return intersection;
+		return intersection
 
 	if ( intersection == correctOrderList ):
 		#need to append absent
@@ -83,13 +83,13 @@ def compareOrders( correctOrderList, actualOrder):
 				break
 
 		if ( not reorderNeed ):
-			return None;
+			return None
 
 		for key in actualOrder.keys() :
 			if actualOrder[key] not in intersection:
 				intersection.append( actualOrder[key] )
 		
-		return intersection;
+		return intersection
 
 	return None
 
@@ -114,26 +114,26 @@ def getActualOrder():
 
 def dumpGamePads( d ):
 	for i in sorted(d.keys()):
-			print( "  Port #{0} is {1}". format(i, d[i]));
+			print( "  Port #{0} is {1}". format(i, d[i]))
 
 def manupulateDevice( devices, enable=1 ):
 	for device in devices:
-		print("    " + PORT_MANIPULATION_COMMAND.format(enable, device));
-		os.system( PORT_MANIPULATION_COMMAND.format(enable, device) );
+		print("    " + PORT_MANIPULATION_COMMAND.format(enable, device))
+		os.system( PORT_MANIPULATION_COMMAND.format(enable, device) )
 		if ( enable ) :
-			ledBlink( INTER_DELAY );
+			ledBlink( INTER_DELAY )
 
 def doReorderGamepads():
 	actualOrder = getActualOrder()
 	needReorder = compareOrders( CORRECT_ORDER, actualOrder )
 	if ( needReorder ):
-		print( "Gamepad misordering is detected: ");
-		dumpGamePads( actualOrder );
+		print( "Gamepad misordering is detected: ")
+		dumpGamePads( actualOrder )
 		
 		# poweroff devices
 		manupulateDevice( needReorder, enable = 0 )
 		# wait after turn off devices
-		ledBlink( INTER_DELAY );
+		ledBlink( INTER_DELAY )
 
 		# poweron devices
 		manupulateDevice( needReorder, enable = 1 )
@@ -145,14 +145,14 @@ def doReorderGamepads():
 			print ( "Gamepad misordered is fixed: " )
 		else:
 			print ( "Gamepad misordered fix failed: " )
-		dumpGamePads( actualOrder );
+		dumpGamePads( actualOrder )
 
-		print ( "\n" )
+		print ( "" )
 
 exitFlag=False
 
 def receiveUpdate(signalNumber, frame):
-	wakeupEvent.set();
+	wakeupEvent.set()
 	return
 
 def terminateProcess(signalNumber, frame):
@@ -176,7 +176,7 @@ if __name__ == "__main__":
 			f=open(WATCHDOG_RUNPID, 'r')
 			pid = f.read()
 			f.close()
-			os.system( "kill -1 " + pid );
+			os.system( "kill -1 " + pid )
 		except:
 			os._exit(os.EX_OK) 
 
@@ -203,7 +203,7 @@ if __name__ == "__main__":
 
 	reorderProcess.start()
 	while not exitFlag:
-		signal.pause();
+		signal.pause()
 
 	reorderProcess.join()
 	try:
