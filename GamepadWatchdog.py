@@ -45,13 +45,15 @@ def ledBlink( seconds ):
 
 def compareOrders( correctOrderList, actualOrder):
 
+	if ( len( actualOrder ) == 0 ):
+		return None;
+
 	maxKey = max(actualOrder.keys())
 	actualOrderList=list()
 	for k in sorted(actualOrder.keys()):
 		actualOrderList.append( actualOrder[ k ] )
 
 	if ( correctOrderList == actualOrderList and maxKey < len(correctOrderList)):
-		print( 'List are same');
 		return None;
 
 	sortedActualOrderList = sorted(actualOrderList)
@@ -67,11 +69,9 @@ def compareOrders( correctOrderList, actualOrder):
 			break
 	
 	if (intersection == actualOrderList and maxKey < len(intersection) ):
-		print( 'Less than needed but order is correct' );
 		return None
 
 	if ( sorted(intersection) == sortedActualOrderList ):
-		print( 'Less than needed and need reorder' );
 		return intersection;
 
 	if ( intersection == correctOrderList ):
@@ -83,17 +83,14 @@ def compareOrders( correctOrderList, actualOrder):
 				break
 
 		if ( not reorderNeed ):
-			print( 'More than needed and no reorder is required' );
 			return None;
 
 		for key in actualOrder.keys() :
 			if actualOrder[key] not in intersection:
 				intersection.append( actualOrder[key] )
 		
-		print( 'More than needed and need reorder' );
 		return intersection;
 
-	print( "default None");
 	return None
 
 def parseInputAndDevice( str ):
@@ -103,11 +100,16 @@ def parseInputAndDevice( str ):
 	return None
 
 def getActualOrder():
+	
 	res = dict()
-	for link in filter( os.path.islink, [ os.path.join( INPUT_DEVICE_PATH, file ) for file in os.listdir(INPUT_DEVICE_PATH) ] ):
-		device = parseInputAndDevice( link + os.readlink( link ) )
-		if ( device ):
-				res[device[0]] = device[1]
+	try:
+		for link in filter( os.path.islink, [ os.path.join( INPUT_DEVICE_PATH, file ) for file in os.listdir(INPUT_DEVICE_PATH) ] ):
+			device = parseInputAndDevice( link + os.readlink( link ) )
+			if ( device ):
+					res[device[0]] = device[1]
+	except OSError:
+		pass
+
 	return res
 
 def dumpGamePads( d ):
@@ -139,7 +141,7 @@ def doReorderGamepads():
 		actualOrder = getActualOrder()
 		needReorder = compareOrders( CORRECT_ORDER, actualOrder )
 
-		if ( not needReorder() ) :
+		if ( not needReorder ) :
 			print ( "Gamepad misordered is fixed: " )
 		else:
 			print ( "Gamepad misordered fix failed: " )
