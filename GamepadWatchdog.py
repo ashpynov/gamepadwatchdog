@@ -49,9 +49,7 @@ def compareOrders( correctOrderList, actualOrder):
 		return None
 
 	maxKey = max(actualOrder.keys())
-	actualOrderList=list()
-	for k in sorted(actualOrder.keys()):
-		actualOrderList.append( actualOrder[ k ] )
+	actualOrderList=[ actualOrder[ k ] for k in sorted(actualOrder.keys()) ]
 
 	if ( correctOrderList == actualOrderList and maxKey < len(correctOrderList)):
 		return None
@@ -67,7 +65,7 @@ def compareOrders( correctOrderList, actualOrder):
 			intersection.append( item )
 		else:
 			break
-	
+
 	if (intersection == actualOrderList and maxKey < len(intersection) ):
 		return None
 
@@ -85,9 +83,7 @@ def compareOrders( correctOrderList, actualOrder):
 		if ( not reorderNeed ):
 			return None
 
-		for key in actualOrder.keys() :
-			if actualOrder[key] not in intersection:
-				intersection.append( actualOrder[key] )
+		intersection.extend( [ actualOrder[key] for key in actualOrder.keys() if actualOrder[key] not in intersection ] )
 		
 		return intersection
 
@@ -103,7 +99,7 @@ def getActualOrder():
 	
 	res = dict()
 	try:
-		for link in filter( os.path.islink, [ os.path.join( INPUT_DEVICE_PATH, file ) for file in os.listdir(INPUT_DEVICE_PATH) ] ):
+		for link in [ os.path.join( INPUT_DEVICE_PATH, file ) for file in os.listdir(INPUT_DEVICE_PATH) if os.path.islink( os.path.join( INPUT_DEVICE_PATH, file )) ]:
 			device = parseInputAndDevice( link + os.readlink( link ) )
 			if ( device ):
 					res[device[0]] = device[1]
