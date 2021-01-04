@@ -39,6 +39,6 @@ fi
 
 echo "Gamepad watchdog script instalation done."
 sleep 3
-$DIR
+$DIR &
 
 #-----------------------------------------------------------
